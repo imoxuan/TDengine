@@ -27,6 +27,12 @@ else ()
     cat("${TD_SUPPORT_DIR}/taosadapter_CMakeLists.txt.in" ${CONTRIB_TMP_FILE})
 endif()
 
+# taoskeeper
+if(${BUILD_KEEPER})
+    MESSAGE("BUILD_KEEPER is on, use taoskeeper")
+    cat("${TD_SUPPORT_DIR}/taoskeeper_CMakeLists.txt.in" ${CONTRIB_TMP_FILE})
+endif()
+
 # pthread
 if(${BUILD_PTHREAD})
     cat("${TD_SUPPORT_DIR}/pthread_CMakeLists.txt.in" ${CONTRIB_TMP_FILE})

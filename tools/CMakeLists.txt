@@ -146,3 +146,49 @@ ELSE ()
             )
     ENDIF (TD_WINDOWS)
 ENDIF ()
+
+IF (TD_BUILD_KEEPER)
+    ADD_SUBDIRECTORY(taos-keeper)
+    MESSAGE("build taoskeeper")
+    INCLUDE(ExternalProject)
+    EXECUTE_PROCESS(
+            COMMAND  git rev-parse --abbrev-ref HEAD
+            RESULT_VARIABLE result_taos_version
+            OUTPUT_VARIABLE taos_version
+    )
+
+    STRING(FIND ${taos_version} release is_release_branch)
+
+    EXECUTE_PROCESS(
+            COMMAND cd ${CMAKE_CURRENT_SOURCE_DIR}/taoskeeper
+    )
+    EXECUTE_PROCESS(
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/taoskeeper
+            COMMAND git rev-parse --short HEAD
+            RESULT_VARIABLE commit_sha1
+            OUTPUT_VARIABLE taoskeeper_commit_sha1
+    )
+    EXECUTE_PROCESS(
+            COMMAND cd ..
+    )
+    MESSAGE("CURRENT SOURCE DIR ${CMAKE_CURRENT_SOURCE_DIR}")
+    ExternalProject_Add(taoskeeper
+            PREFIX "taoskeeper"
+            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/taoskeeper
+            BUILD_ALWAYS off
+            DEPENDS taos
+            BUILD_IN_SOURCE 1
+            CONFIGURE_COMMAND cmake -E echo "taoskeeper no need cmake to config"
+            PATCH_COMMAND
+            COMMAND git clean -f -d
+            BUILD_COMMAND
+            COMMAND go build -ldflags="-s -w -X 'github.com/taosdata/taoskeeper/version.Version=${taos_version}'" -o taoskeeper main.go
+            INSTALL_COMMAND
+            COMMAND cmake -E echo "Copy taoskeeper"
+            COMMAND cmake -E copy taoskeeper ${CMAKE_BINARY_DIR}/build/bin
+            COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/test/cfg/
+            COMMAND cmake -E echo "Copy taoskeeper.toml"
+            COMMAND cmake -E copy ./example/config/taoskeeper.toml ${CMAKE_BINARY_DIR}/test/cfg/
+            COMMAND cmake -E copy ./taoskeeper.service ${CMAKE_BINARY_DIR}/test/cfg/
+            )
+ENDIF ()
