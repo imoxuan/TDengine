@@ -92,7 +92,9 @@ int32_t syncNodeOnTimeout(SSyncNode* ths, const SRpcMsg* pRpc) {
   int32_t      ret = 0;
   SyncTimeout* pMsg = pRpc->pCont;
 
-  syncLogRecvTimer(ths, pMsg, "");
+  sNTrace(ths, "recv sync-timer {type:%s, lc:%" PRId64 ", ms:%d, ts:%" PRId64 ", elapsed:%" PRId64 ", data:%p}, %s",
+          syncTimerTypeStr(pMsg->timeoutType), pMsg->logicClock, pMsg->timerMS, pMsg->timeStamp,
+          taosGetTimestampMs() - pMsg->timeStamp, pMsg->data);
 
   if (pMsg->timeoutType == SYNC_TIMEOUT_PING) {
     if (atomic_load_64(&ths->pingTimerLogicClockUser) <= pMsg->logicClock) {
