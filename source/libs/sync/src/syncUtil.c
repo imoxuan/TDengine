@@ -451,23 +451,6 @@ void syncLogRecvHeartbeat(SSyncNode* pSyncNode, const SyncHeartbeat* pMsg, const
           host, port, pMsg->term, pMsg->commitIndex, pMsg->minMatchIndex, pMsg->timeStamp, s);
 }
 
-void syncLogSendHeartbeatReply(SSyncNode* pSyncNode, const SyncHeartbeatReply* pMsg, const char* s) {
-  char     host[64];
-  uint16_t port;
-  syncUtilU642Addr(pMsg->destId.addr, host, sizeof(host), &port);
-
-  sNTrace(pSyncNode, "send sync-heartbeat-reply from %s:%d {term:%" PRId64 ", ts:%" PRId64 "}, %s", host, port,
-          pMsg->term, pMsg->timeStamp, s);
-}
-
-void syncLogRecvHeartbeatReply(SSyncNode* pSyncNode, const SyncHeartbeatReply* pMsg, const char* s) {
-  char     host[64];
-  uint16_t port;
-  syncUtilU642Addr(pMsg->srcId.addr, host, sizeof(host), &port);
-  sNTrace(pSyncNode, "recv sync-heartbeat-reply from %s:%d {term:%" PRId64 ", ts:%" PRId64 "}, %s", host, port,
-          pMsg->term, pMsg->timeStamp, s);
-}
-
 void syncLogSendSyncPreSnapshot(SSyncNode* pSyncNode, const SyncPreSnapshot* pMsg, const char* s) {
   char     host[64];
   uint16_t port;

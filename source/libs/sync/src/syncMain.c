@@ -2240,9 +2240,12 @@ int32_t syncNodeOnHeartbeatReply(SSyncNode* ths, const SRpcMsg* pRpcMsg) {
 
   int64_t tsMs = taosGetTimestampMs();
   int64_t timeDiff = tsMs - pMsg->timeStamp;
-  char    buf[128];
-  snprintf(buf, sizeof(buf), "net elapsed:%" PRId64, timeDiff);
-  syncLogRecvHeartbeatReply(ths, pMsg, buf);
+
+  char     host[64];
+  uint16_t port;
+  syncUtilU642Addr(pMsg->srcId.addr, host, sizeof(host), &port);
+  sNTrace(ths, "recv sync-heartbeat-reply from %s:%d {term:%" PRId64 ", ts:%" PRId64 "}, net elapsed:%" PRId64, host,
+          port, pMsg->term, pMsg->timeStamp, timeDiff);
 
   // update last reply time, make decision whether the other node is alive or not
   syncIndexMgrSetRecvTime(ths->pMatchIndex, &pMsg->srcId, tsMs);
