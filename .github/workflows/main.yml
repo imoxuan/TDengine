@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: imoxuan
+      - uses: imoxuan/TDengine
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
           owner: mack-a
