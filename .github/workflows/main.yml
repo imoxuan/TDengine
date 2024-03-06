@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: imoxuan/TDengine
         with:
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.fork-token }}
           owner: mack-a
           base: master
           head: master
